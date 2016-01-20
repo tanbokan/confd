@@ -15,7 +15,8 @@ type Client struct {
 
 // NewEtcdClient returns an *etcd.Client with a connection to named machines.
 // It returns an error if a connection to the cluster cannot be made.
-func NewEtcdClient(machines []string, cert, key string, caCert string) (*Client, error) {
+//func NewEtcdClient(machines []string, cert, key string, caCert string) (*Client, error) {
+func NewEtcdClient(machines []string, cert, key string, caCert string, basicAuth bool, username string, password string) (*Client, error) {
 	var c *goetcd.Client
 	var err error
 	if cert != "" && key != "" {
@@ -25,6 +26,9 @@ func NewEtcdClient(machines []string, cert, key string, caCert string) (*Client,
 		}
 	} else {
 		c = goetcd.NewClient(machines)
+	}
+	if basicAuth {
+		c.SetCredentials(username, password)
 	}
 	// Configure the DialTimeout, since 1 second is often too short
 	c.SetDialTimeout(time.Duration(3) * time.Second)
